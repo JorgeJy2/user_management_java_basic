@@ -1,0 +1,87 @@
+@startuml Flujo de Datos - Operación CRUD
+
+actor Usuario as U
+participant "UserManagementApp" as App
+participant "UserController" as Controller
+participant "UserService" as Service
+participant "UserDAO" as DAO
+participant "DatabaseConfig" as DB
+database "MySQL" as MySQL
+
+== Crear Usuario ==
+U -> App: Ejecutar aplicación
+App -> Controller: createUser(userData)
+Controller -> Service: createUser(user)
+Service -> Service: validateUser(user)
+Service -> DAO: userNameExists(username)
+DAO -> DB: getConnection()
+DB -> MySQL: SELECT COUNT(*) FROM users WHERE user_name = ?
+MySQL --> DB: ResultSet
+DB --> DAO: Connection
+DAO --> Service: boolean (false)
+Service -> DAO: createUser(user)
+DAO -> DB: getConnection()
+DB -> MySQL: INSERT INTO users (name, age, gender_id, user_name) VALUES (?, ?, ?, ?)
+MySQL --> DB: Generated Keys
+DB --> DAO: Connection
+DAO --> Service: int userId
+Service --> Controller: boolean (true)
+Controller --> App: "Usuario creado exitosamente"
+App --> U: Mostrar resultado
+
+== Obtener Usuario ==
+U -> App: Solicitar usuario por ID
+App -> Controller: showUserById(id)
+Controller -> Service: getUserById(id)
+Service -> DAO: getUserById(id)
+DAO -> DB: getConnection()
+DB -> MySQL: SELECT * FROM users WHERE id = ?
+MySQL --> DB: ResultSet
+DB --> DAO: Connection
+DAO --> Service: User object
+Service --> Controller: User object
+Controller --> App: Formatear y mostrar usuario
+App --> U: Mostrar datos del usuario
+
+== Actualizar Usuario ==
+U -> App: Solicitar actualización
+App -> Controller: updateUser(userData)
+Controller -> Service: updateUser(user)
+Service -> Service: validateUser(user)
+Service -> DAO: getUserById(id)
+DAO -> DB: getConnection()
+DB -> MySQL: SELECT * FROM users WHERE id = ?
+MySQL --> DB: ResultSet
+DB --> DAO: Connection
+DAO --> Service: User object
+Service -> DAO: updateUser(user)
+DAO -> DB: getConnection()
+DB -> MySQL: UPDATE users SET name=?, age=?, gender_id=?, user_name=? WHERE id=?
+MySQL --> DB: Affected Rows
+DB --> DAO: Connection
+DAO --> Service: void
+Service --> Controller: boolean (true)
+Controller --> App: "Usuario actualizado exitosamente"
+App --> U: Mostrar resultado
+
+== Eliminar Usuario ==
+U -> App: Solicitar eliminación
+App -> Controller: deleteUser(id)
+Controller -> Service: deleteUser(id)
+Service -> DAO: getUserById(id)
+DAO -> DB: getConnection()
+DB -> MySQL: SELECT * FROM users WHERE id = ?
+MySQL --> DB: ResultSet
+DB --> DAO: Connection
+DAO --> Service: User object
+Service -> DAO: deleteUser(id)
+DAO -> DB: getConnection()
+DB -> MySQL: DELETE FROM users WHERE id = ?
+MySQL --> DB: Affected Rows
+DB --> DAO: Connection
+DAO --> Service: void
+Service --> Controller: boolean (true)
+Controller --> App: "Usuario eliminado exitosamente"
+App --> U: Mostrar resultado
+
+@enduml 

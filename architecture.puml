@@ -1,0 +1,98 @@
+@startuml Arquitectura del Sistema de Gestión de Usuarios
+
+!define RECTANGLE class
+
+package "Capa de Presentación" {
+    [UserManagementApp.java] as App
+    [UserController.java] as Controller
+}
+
+package "Capa de Servicios" {
+    interface "UserServiceInterface" as USI
+    interface "GenderServiceInterface" as GSI
+    [UserService.java] as UserService
+    [GenderService.java] as GenderService
+}
+
+package "Capa de Acceso a Datos" {
+    [UserDAO.java] as UserDAO
+    [GenderDAO.java] as GenderDAO
+}
+
+package "Capa de Configuración" {
+    [DatabaseConfig.java] as DBConfig
+}
+
+package "Capa de Modelos" {
+    [User.java] as User
+    [Gender.java] as Gender
+}
+
+package "Capa de Utilidades" {
+    [Constants.java] as Constants
+    [SqlUtils.java] as SqlUtils
+}
+
+package "Capa de Excepciones" {
+    [UserManagementException.java] as Exception
+}
+
+database "MySQL Database" as MySQL
+
+' Relaciones de la capa de presentación
+App --> Controller
+
+' Relaciones de la capa de servicios
+Controller --> UserService
+Controller --> GenderService
+UserService ..|> USI
+GenderService ..|> GSI
+
+' Relaciones de acceso a datos
+UserService --> UserDAO
+UserService --> GenderDAO
+GenderService --> GenderDAO
+
+' Relaciones de configuración
+UserDAO --> DBConfig
+GenderDAO --> DBConfig
+DBConfig --> MySQL
+
+' Relaciones de modelos
+UserService --> User
+GenderService --> Gender
+UserDAO --> User
+GenderDAO --> Gender
+
+' Relaciones de utilidades
+UserService --> Constants
+GenderService --> Constants
+UserDAO --> Constants
+GenderDAO --> Constants
+UserDAO --> SqlUtils
+GenderDAO --> SqlUtils
+
+' Relaciones de excepciones
+UserService --> Exception
+GenderService --> Exception
+UserDAO --> Exception
+GenderDAO --> Exception
+
+' Estilos
+App #LightBlue
+Controller #LightBlue
+UserService #LightGreen
+GenderService #LightGreen
+USI #LightYellow
+GSI #LightYellow
+UserDAO #LightCyan
+GenderDAO #LightCyan
+DBConfig #Orange
+User #Pink
+Gender #Pink
+Constants #LightGray
+SqlUtils #LightGray
+Exception #LightRed
+MySQL #LightGreen
+
+@enduml 
