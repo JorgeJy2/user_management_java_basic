@@ -193,5 +193,27 @@ public class UserController {
         // Mostrar usuarios existentes
         showAllUsers();
         
+        // Crear usuarios de ejemplo
+        createUser("María García", 30, 2, "maria.garcia");
+        createUser("Carlos López", 28, 1, "carlos.lopez");
+        createUser("Ana Martínez", 35, 2, "ana.martinez");
+        
+        // Mostrar usuarios después de crear
+        showAllUsers();
+        
+        // Buscar un usuario específico
+        showUserById(1);
+        
+        // Actualizar un usuario
+        updateUser(1, "Juan Pérez Actualizado", 26, 1, "juan.perez.actualizado");
+        
+        // Mostrar el usuario actualizado
+        showUserById(1);
+        
+        // Eliminar un usuario
+        deleteUser(2);
+        
+        // Mostrar usuarios después de eliminar
+        showAllUsers();
     }
 } 
